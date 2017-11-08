@@ -1,2 +1,2 @@
-Portal AngularJS quick test
+API Manager Gateway
 ======

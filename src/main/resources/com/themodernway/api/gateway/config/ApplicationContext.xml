@@ -23,6 +23,7 @@
 	xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:hz="http://www.hazelcast.com/schema/spring"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 						http://www.springframework.org/schema/beans/spring-beans.xsd
 						http://www.springframework.org/schema/context
@@ -35,6 +36,8 @@
 						http://www.springframework.org/schema/integration/spring-integration.xsd
 						http://www.springframework.org/schema/integration/stream
 						http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd
+						http://www.hazelcast.com/schema/spring
+						http://www.hazelcast.com/schema/spring/hazelcast-spring-3.9.xsd
 						http://www.springframework.org/schema/rabbit
 						http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
 
@@ -56,7 +59,7 @@
 		<property name="loggingLevelAsString" value="INFO" />
 	</bean>
 
-	<bean id="TheModernWayAPIGatewayBuildDescriptor" class="com.themodernway.server.core.support.spring.BuildDescriptor">
+	<bean id="TheModernWayGatewayBuildDescriptor" class="com.themodernway.server.core.support.spring.BuildDescriptor">
 		<constructor-arg value="@GRADLE_BUILD_PROJECT_TITLE@" />
 		<property name="buildUser">
 			<value><![CDATA[@GRADLE_BUILD_USER@]]></value>
@@ -75,10 +78,10 @@
 		<property name="buildModuleVersion" value="@GRADLE_BUILD_ARTIFACT_ID@-@GRADLE_BUILD_MODULE_VERSION@.war" />
 	</bean>
 	
-	<bean id="API_MongoDB" class="com.themodernway.server.mongodb.support.spring.MongoDBDescriptor" destroy-method="close" />
+	<bean id="Gateway_MongoDB" class="com.themodernway.server.mongodb.support.spring.MongoDBDescriptor" destroy-method="close" />
 	
-	<bean id="API_HikariConfig" class="com.zaxxer.hikari.HikariConfig">
-		<property name="poolName" value="API_SpringHikariCP" />
+	<bean id="Gateway_HikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<property name="poolName" value="Gateway_SpringHikariCP" />
 		<property name="connectionTestQuery" value="SELECT NOW()" />
 		<property name="dataSourceClassName" value="org.postgresql.ds.PGSimpleDataSource" />
 		<property name="maximumPoolSize" value="12" />
@@ -86,19 +89,19 @@
 		<property name="registerMbeans" value="false" />
 		<property name="dataSourceProperties">
 			<props>
-				<prop key="url">${api.postgres.jdbc}</prop>
-				<prop key="user">${api.postgres.user}</prop>
-				<prop key="password">${api.postgres.pass}</prop>
+				<prop key="url">${gateway.postgres.jdbc}</prop>
+				<prop key="user">${gateway.postgres.user}</prop>
+				<prop key="password">${gateway.postgres.pass}</prop>
 			</props>
 		</property>
 	</bean>
 
-	<bean id="API_SQLPooledDS" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
-		<constructor-arg ref="API_HikariConfig" />
+	<bean id="Gateway_SQLPooledDS" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<constructor-arg ref="Gateway_HikariConfig" />
 	</bean>
 	
-	<bean id="API_SQLDescriptor" class="com.themodernway.server.sql.support.spring.GSQLDescriptor" destroy-method="close">
-		<constructor-arg ref="API_SQLPooledDS" />
+	<bean id="Gateway_SQLDescriptor" class="com.themodernway.server.sql.support.spring.GSQLDescriptor" destroy-method="close">
+		<constructor-arg ref="Gateway_SQLPooledDS" />
     	<property name="description" value="API PostgreSQL DataBase" />
     </bean>
 	
@@ -128,6 +131,23 @@
 			</list>
 		</constructor-arg>
 	</bean>
+	
+	<hz:hazelcast id="instance">
+        <hz:config>
+            <hz:group name="${hazelcast.group.name}" password="${hazelcast.group.pass}" />
+            <hz:properties>
+                <hz:property name="hazelcast.merge.first.run.delay.seconds">5</hz:property>
+                <hz:property name="hazelcast.merge.next.run.delay.seconds">5</hz:property>
+            </hz:properties>
+            <hz:network port="${hazelcast.group.port}" port-auto-increment="${hazelcast.group.port.incr}">
+                <hz:join>
+                    <hz:multicast enabled="true"/>
+                </hz:join>
+            </hz:network>
+        </hz:config>
+    </hz:hazelcast>
+    
+    <hz:map id="imap" instance-ref="instance" name="Map" lazy-init="false"/>
 	
 	<context:component-scan base-package="com.themodernway.api.gateway.rest.services" />
 		

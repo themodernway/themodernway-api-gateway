@@ -30,6 +30,7 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>
 			classpath:/com/themodernway/api/gateway/config/ApplicationContext.xml
+			classpath:/com/themodernway/server/hazelcast/config/HazelcastApplicationContext.xml
 			classpath:/com/themodernway/server/sql/config/SQLApplicationContext.xml
 			classpath:/com/themodernway/server/mongodb/config/MongoDBApplicationContext.xml
 			classpath:/com/themodernway/server/rest/config/RESTApplicationContext.xml

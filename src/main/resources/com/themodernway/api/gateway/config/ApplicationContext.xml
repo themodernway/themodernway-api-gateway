@@ -40,7 +40,7 @@
 
 	<bean id="BootstrapStringCryptoProvider" class="com.themodernway.server.core.security.BootstrapStringCryptoProvider">
 		<constructor-arg>
-			<value>file:/opt/development/properties/api/crypto.properties</value>
+			<value>file:/opt/development/properties/gateway/crypto.properties</value>
 		</constructor-arg>
 	</bean>
 
@@ -49,8 +49,8 @@
 		<constructor-arg value="0xCAFEBABE;" />
 		<property name="locations">
 			<list>
-				<value>file:/opt/development/properties/api/webapp.properties</value>
-				<value>file:/opt/development/properties/api/hazelc.properties</value>
+				<value>file:/opt/development/properties/gateway/webapp.properties</value>
+				<value>file:/opt/development/properties/gateway/hazelc.properties</value>
 			</list>
 		</property>
 		<property name="loggingLevelAsString" value="INFO" />

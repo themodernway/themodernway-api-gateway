@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>API Gateway 1.2.9-RELEASE</title>
+</head>
+<script src="assets/js/angular.min.js"></script>
+<script src="assets/js/app.js"></script>
+<link rel="stylesheet" href="assets/css/w3c.css">
+<link rel="stylesheet" href="assets/css/app.css">
+<body>
+<div ng-app="demoApplication" ng-cloak ng-controller="demoController" class="w3-card-2 w3-margin">
+  <header class="w3-container w3-light-grey w3-padding-16">
+    <h3>REST Tests - {{tstatus}}</h3>
+  </header>
+  <div class="DemoResultsBox" id="DemoResultsBox">
+  	<pre>{{results}}</pre>
+  </div>
+  <div class="w3-container w3-light-grey w3-padding-16">
+    <div class="w3-row w3-margin-top">
+		<button ng-click="doServiceGET('/users/increment')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Increment</button>
+        <button ng-click="doServiceGET('/users/findusers')" ng-disabled="working" class="w3-btn w3-padding w3-blue">SQL Users</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

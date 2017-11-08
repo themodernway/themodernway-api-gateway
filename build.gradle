@@ -1,0 +1,163 @@
+/*
+ * Copyright (c) 2017, The Modern Way. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath(group: 'org.ajoberstar', name: 'grgit', version: '1.7.2')
+        classpath(group: 'commons-codec', name: 'commons-codec', version: '1.10')
+        classpath(group: 'commons-logging', name: 'commons-logging', version: '1.2')
+        classpath(group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3')
+    }
+}
+
+import org.apache.tools.ant.filters.FixCrLfFilter
+import org.apache.tools.ant.filters.ReplaceTokens
+import java.net.InetAddress
+import org.ajoberstar.grgit.Grgit
+
+apply plugin: 'war'
+apply plugin: 'maven'
+apply plugin: 'groovy'
+apply plugin: 'jacoco'
+apply plugin: 'signing'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.8
+
+targetCompatibility = 1.8
+
+version = '1.2.9-RELEASE'
+
+repositories {
+    mavenCentral()
+    maven { url "${sonatype_snapshotURL}" }
+}
+
+eclipse {
+    classpath {
+        downloadJavadoc = true
+    }
+}
+
+tasks.withType(GroovyCompile) {
+    groovyOptions.optimizationOptions.indy = true
+}
+
+task deleteConfigs(type: Delete) {
+    FileTree tree = fileTree (dir: 'build/resources/main/com/themodernway/api/gateway/config');
+    tree.each { File file ->
+        delete(file)
+    }
+}
+
+task filterConfigs(dependsOn: deleteConfigs, type: Copy) {
+    from 'src/main/resources/com/themodernway/api/gateway/config'
+    into 'build/resources/main/com/themodernway/api/gateway/config'
+    filter(FixCrLfFilter)
+    filter(ReplaceTokens, tokens: getFilterTokens())
+}
+
+def getFilterTokens() {
+    [GRADLE_BUILD_ARTIFACT_ID: getProjectArtifactID(), GRADLE_BUILD_PROJECT_TITLE: getProjectTitle(), GRADLE_BUILD_USER: getBuildUser(), GRADLE_BUILD_DATE: getBuildDate(), GRADLE_JAVA_VERSION: getJavaVersion(), GRADLE_GIT_COMMIT_HASH: getBuildGITCommitHash(), GRADLE_GIT_COMMIT_USER: getBuildGITCommitUser(), GRADLE_GIT_COMMIT_MESSAGE: getBuildGITCommitMessage(), GRADLE_BUILD_SERVER_HOST: getBuildServerHost(), GRADLE_BUILD_SERVER_BUILD: getBuildServerBuild(), GRADLE_BUILD_MODULE_VERSION: getBuildModuleVersion()]
+}
+
+def String getProjectArtifactID() {
+    getProjectTitle().toLowerCase()
+}
+
+def String getProjectTitle() {
+    getProjectCommonName().replaceAll(' ', '-')
+}
+
+def String getProjectCommonName() {
+    'TheModernWay API Gateway'
+}
+
+def String getBuildModuleVersion() {
+    version
+}
+
+def String getBuildDate() {
+    (new Date()).toString()
+}
+
+def String getBuildServerHost() {
+    try
+    {
+        InetAddress.getLocalHost().getHostName()
+    }
+    catch (Exception e)
+    {
+        'localhost'
+    }
+}
+
+def String getJavaVersion() {
+    System.getProperty('java.version') ?: 'unknown'
+}
+
+def String getBuildUser() {
+    System.getProperty('user.name') ?: 'unknown'
+}
+
+def String getBuildServerBuild() {
+    System.getenv('BUILD_DISPLAY_NAME') ?: 'Command line ' + GradleVersion.current().toString()
+}
+
+def String getBuildGITHomeURL() {
+    'https://github.com/themodernway/' + getProjectArtifactID()
+}
+
+def String getBuildGITCommitHash() {
+    ''//getBuildGITHomeURL() + '/commit/' + Grgit.open(project.file('.')).head().id
+}
+
+def String getBuildGITCommitUser() {
+    ''//Grgit.open(project.file('.')).head().committer.email
+}
+
+def String getBuildGITCommitMessage() {
+    ''//Grgit.open(project.file('.')).head().shortMessage
+}
+
+configurations {
+    compile.exclude(group: 'org.slf4j', module: 'log4j-over-slf4j')
+    runtime.exclude(group: 'org.slf4j', module: 'log4j-over-slf4j')
+}
+
+dependencies {
+    compile(group: 'com.themodernway', name: 'themodernway-server-sql', version: '1.2.9-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-rest', version: '1.2.9-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-mongodb', version: '1.2.9-RELEASE')
+    compile(group: 'org.postgresql', name: 'postgresql', version: '42.0.0')
+    providedCompile(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0')
+}
+
+
+war.dependsOn(filterConfigs)
+
+war {
+    manifest {
+        attributes 'Implementation-Title': getProjectTitle(), 'Implementation-Version': getBuildModuleVersion()
+    }
+    from('war') {
+        exclude 'WEB-INF/classes/**'
+    }
+    archiveName 'gateway.war'
+}

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ * Copyright (c) 2017, The Modern Way. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-amqp="http://www.springframework.org/schema/integration/amqp"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:int-stream="http://www.springframework.org/schema/integration/stream"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/task
+						http://www.springframework.org/schema/task/spring-task.xsd
+						http://www.springframework.org/schema/integration/amqp
+						http://www.springframework.org/schema/integration/amqp/spring-integration-amqp.xsd
+						http://www.springframework.org/schema/integration
+						http://www.springframework.org/schema/integration/spring-integration.xsd
+						http://www.springframework.org/schema/integration/stream
+						http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd
+						http://www.springframework.org/schema/rabbit
+						http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
+
+	<bean id="BootstrapStringCryptoProvider" class="com.themodernway.server.core.security.BootstrapStringCryptoProvider">
+		<constructor-arg>
+			<value>file:/opt/development/properties/api/crypto.properties</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="PropertiesProvider" class="com.themodernway.server.core.support.spring.CoreEncryptedPropertiesProviderPlaceholderConfigurer">
+		<constructor-arg ref="BootstrapStringCryptoProvider" />
+		<constructor-arg value="0xCAFEBABE;" />
+		<property name="locations">
+			<list>
+				<value>file:/opt/development/properties/api/webapp.properties</value>
+				<value>file:/opt/development/properties/api/hazelc.properties</value>
+			</list>
+		</property>
+		<property name="loggingLevelAsString" value="INFO" />
+	</bean>
+
+	<bean id="TheModernWayAPIGatewayBuildDescriptor" class="com.themodernway.server.core.support.spring.BuildDescriptor">
+		<constructor-arg value="@GRADLE_BUILD_PROJECT_TITLE@" />
+		<property name="buildUser">
+			<value><![CDATA[@GRADLE_BUILD_USER@]]></value>
+		</property>
+		<property name="buildDate" value="@GRADLE_BUILD_DATE@" />
+		<property name="javaVersion" value="@GRADLE_JAVA_VERSION@" />
+		<property name="buildGITCommitHash" value="@GRADLE_GIT_COMMIT_HASH@" />
+		<property name="buildGITCommitUser">
+			<value><![CDATA[@GRADLE_GIT_COMMIT_USER@]]></value>
+		</property>
+		<property name="buildGITCommitMessage">
+			<value><![CDATA[@GRADLE_GIT_COMMIT_MESSAGE@]]></value>
+		</property>
+		<property name="buildServerHost" value="@GRADLE_BUILD_SERVER_HOST@" />
+		<property name="buildServerBuild" value="@GRADLE_BUILD_SERVER_BUILD@" />
+		<property name="buildModuleVersion" value="@GRADLE_BUILD_ARTIFACT_ID@-@GRADLE_BUILD_MODULE_VERSION@.war" />
+	</bean>
+	
+	<bean id="API_MongoDB" class="com.themodernway.server.mongodb.support.spring.MongoDBDescriptor" destroy-method="close" />
+	
+	<bean id="API_HikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<property name="poolName" value="API_SpringHikariCP" />
+		<property name="connectionTestQuery" value="SELECT NOW()" />
+		<property name="dataSourceClassName" value="org.postgresql.ds.PGSimpleDataSource" />
+		<property name="maximumPoolSize" value="12" />
+		<property name="idleTimeout" value="30000" />
+		<property name="registerMbeans" value="false" />
+		<property name="dataSourceProperties">
+			<props>
+				<prop key="url">${api.postgres.jdbc}</prop>
+				<prop key="user">${api.postgres.user}</prop>
+				<prop key="password">${api.postgres.pass}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="API_SQLPooledDS" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<constructor-arg ref="API_HikariConfig" />
+	</bean>
+	
+	<bean id="API_SQLDescriptor" class="com.themodernway.server.sql.support.spring.GSQLDescriptor" destroy-method="close">
+		<constructor-arg ref="API_SQLPooledDS" />
+    	<property name="description" value="API PostgreSQL DataBase" />
+    </bean>
+	
+	<bean id="ScriptingProvider" class="com.themodernway.server.core.scripting.ScriptingProvider" destroy-method="close">
+		<constructor-arg>
+			<list>
+				<bean class="com.themodernway.server.core.scripting.GroovyScriptingProperties" />
+				<bean class="com.themodernway.server.core.scripting.JavaScriptScriptingProperties" />
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="RESTServletContextCustomizer" class="com.themodernway.server.rest.support.spring.RESTServletContextCustomizer">
+		<constructor-arg value="RESTServlet" />
+		<constructor-arg value="/services/*" />
+	</bean>
+	
+	<bean id="HeaderInjectorFilterContextCustomizer" class="com.themodernway.server.core.support.spring.HeaderInjectorFilterContextCustomizer">
+		<constructor-arg value="SecurityFilter" />
+		<constructor-arg value="/*" />
+		<constructor-arg>
+			<list>
+				<bean class="com.themodernway.server.core.servlet.filter.StrictTransportHeaderInjector" />
+				<bean class="com.themodernway.server.core.servlet.filter.XContentTypeProtectionHeaderInjector" />
+				<bean class="com.themodernway.server.core.servlet.filter.XFrameOptionsHeaderInjector" />
+				<bean class="com.themodernway.server.core.servlet.filter.XSSProtectionHeaderInjector" />
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	<context:component-scan base-package="com.themodernway.api.gateway.rest.services" />
+		
+	<context:annotation-config />
+		
+</beans>

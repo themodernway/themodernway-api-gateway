@@ -1,0 +1,18 @@
+{
+  "include": ["app"],
+  "compilerOptions": {
+    "allowJs": true,
+    "module": "es6",
+    "target": "es6",
+    "lib": ["dom","es6"],
+    "jsx": "react",
+    "sourceMap": true,
+    "baseUrl": "./app",
+    "paths": {
+      "sample-module": ["app/sample-module"],
+      "styles": ["styles"]
+    },
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
+  }
+}

@@ -37,10 +37,6 @@ module.exports = {
     modules: ['app', 'node_modules', 'styles']
   },
   target: 'web',
-  externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM'
-  },
   plugins: [
     new HtmlWebpackPlugin({
       template: 'index.ejs',

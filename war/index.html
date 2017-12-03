@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>API Gateway 1.2.11-RELEASE</title>
+<title>API Gateway 1.2.16-RELEASE</title>
 </head>
 <script src="assets/js/angular.min.js"></script>
 <script src="assets/js/app.js"></script>
@@ -23,6 +23,10 @@
         <button ng-click="doServiceGET('/hazelcast/hzmap')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Hazelcast</button>
         <button ng-click="doServiceGET('/admin/descriptors')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Descriptors</button>
         <button ng-click="doServiceGET('/admin/endpoints')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Endpoints</button>
+        <button ng-click="doServiceGET('/users/finduser_by_name?name=bob')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Find Bob</button>
+        <button ng-click="doServiceGET('/users/finduser_by_name?name=dean')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Find Dean</button>
+        <button ng-click="doServiceGET('/users/increment_user__by_name?name=bob')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Increment Bob</button>
+        <button ng-click="doServiceGET('/users/increment_user__by_name?name=dean')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Increment Dean</button>
     </div>
   </div>
 </div>

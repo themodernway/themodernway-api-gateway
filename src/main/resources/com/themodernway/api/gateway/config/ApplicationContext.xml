@@ -50,7 +50,6 @@
 		<property name="locations">
 			<list>
 				<value>file:/opt/development/properties/gateway/webapp.properties</value>
-				<value>file:/opt/development/properties/gateway/hazelc.properties</value>
 			</list>
 		</property>
 		<property name="loggingLevelAsString" value="INFO" />
@@ -114,6 +113,17 @@
 	<bean id="RESTServletContextCustomizer" class="com.themodernway.server.rest.support.spring.RESTServletContextCustomizer">
 		<constructor-arg value="RESTServlet" />
 		<constructor-arg value="/services/*" />
+	</bean>
+	
+	<bean id="ContentGetServletContextCustomizer" class="com.themodernway.server.core.support.spring.ContentGetServletContextCustomizer">
+		<constructor-arg value="ContentGetServlet" />
+		<constructor-arg value="/content/*" />
+		<property name="fileItemStorageName" value="content" />
+	</bean>
+	
+	<bean id="ContentSimpleFileItemStorage" class="com.themodernway.server.core.file.vfs.simple.SimpleFileItemStorage">
+		<constructor-arg value="content" />
+		<constructor-arg value="/Development/content" />
 	</bean>
 	
 	<bean id="HeaderInjectorFilterContextCustomizer" class="com.themodernway.server.core.support.spring.HeaderInjectorFilterContextCustomizer">

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, The Modern Way. All rights reserved.
+ * Copyright (c) 2018, The Modern Way. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ sourceCompatibility = 1.8
 
 targetCompatibility = 1.8
 
-version = '1.2.23-RELEASE'
+version = '1.2.25-RELEASE'
 
 repositories {
     mavenCentral()
@@ -117,7 +117,7 @@ def String getBuildUser() {
 }
 
 def String getBuildServerBuild() {
-    System.getenv('BUILD_DISPLAY_NAME') ?: 'Command line ' + GradleVersion.current().toString()
+    System.getenv('BUILD_DISPLAY_NAME') ?: "Command line gradle version ${gradle.gradleVersion}"
 }
 
 def String getBuildGITHomeURL() {
@@ -142,9 +142,9 @@ configurations {
 }
 
 dependencies {
-    compile(group: 'com.themodernway', name: 'themodernway-server-sql', version: '1.2.23-RELEASE')
-    compile(group: 'com.themodernway', name: 'themodernway-server-rest', version: '1.2.23-RELEASE')
-    compile(group: 'com.themodernway', name: 'themodernway-server-mongodb', version: '1.2.23-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-sql', version: '1.2.25-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-rest', version: '1.2.25-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-mongodb', version: '1.2.25-RELEASE')
     compile(group: 'org.mongodb', name: 'mongodb-driver', version: '3.6.1')
     compile(group: 'org.postgresql', name: 'postgresql', version: '42.1.4')
     providedCompile(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0')

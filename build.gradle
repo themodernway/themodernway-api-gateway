@@ -23,6 +23,7 @@ buildscript {
         classpath(group: 'commons-codec', name: 'commons-codec', version: '1.11')
         classpath(group: 'commons-logging', name: 'commons-logging', version: '1.2')
         classpath(group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.4')
+        classpath(group: 'org.owasp', name: 'dependency-check-gradle', version: '3.0.2')
     }
 }
 
@@ -37,12 +38,13 @@ apply plugin: 'groovy'
 apply plugin: 'jacoco'
 apply plugin: 'signing'
 apply plugin: 'eclipse'
+apply plugin: 'org.owasp.dependencycheck'
 
 sourceCompatibility = 1.8
 
 targetCompatibility = 1.8
 
-version = '1.2.25-RELEASE'
+version = '1.2.28-RELEASE'
 
 repositories {
     mavenCentral()
@@ -60,7 +62,7 @@ tasks.withType(GroovyCompile) {
 }
 
 task deleteConfigs(type: Delete) {
-    FileTree tree = fileTree (dir: 'build/resources/main/com/themodernway/api/gateway/config');
+    FileTree tree = fileTree(dir: 'build/resources/main/com/themodernway/api/gateway/config');
     tree.each { File file ->
         delete(file)
     }
@@ -136,20 +138,24 @@ def String getBuildGITCommitMessage() {
     Grgit.open(project.file('.')).head().shortMessage
 }
 
+dependencyCheck {
+    failOnError = false
+    outputDirectory = "${buildDir}/reports/cve"
+    suppressionFile = file('config/cve/suppress.xml')
+}
+
 configurations {
     compile.exclude(group: 'org.slf4j', module: 'log4j-over-slf4j')
     runtime.exclude(group: 'org.slf4j', module: 'log4j-over-slf4j')
 }
 
 dependencies {
-    compile(group: 'com.themodernway', name: 'themodernway-server-sql', version: '1.2.25-RELEASE')
-    compile(group: 'com.themodernway', name: 'themodernway-server-rest', version: '1.2.25-RELEASE')
-    compile(group: 'com.themodernway', name: 'themodernway-server-mongodb', version: '1.2.25-RELEASE')
-    compile(group: 'org.mongodb', name: 'mongodb-driver', version: '3.6.1')
+    compile(group: 'com.themodernway', name: 'themodernway-server-sql', version: '1.2.28-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-rest', version: '1.2.28-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-mongodb', version: '1.2.28-RELEASE')
     compile(group: 'org.postgresql', name: 'postgresql', version: '42.1.4')
     providedCompile(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0')
 }
-
 
 war.dependsOn(filterConfigs)
 

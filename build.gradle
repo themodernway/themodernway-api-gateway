@@ -44,7 +44,7 @@ sourceCompatibility = 1.8
 
 targetCompatibility = 1.8
 
-version = '1.2.29-RELEASE'
+version = '1.2.31-RELEASE'
 
 repositories {
     mavenCentral()
@@ -150,9 +150,9 @@ configurations {
 }
 
 dependencies {
-    compile(group: 'com.themodernway', name: 'themodernway-server-sql', version: '1.2.29-RELEASE')
-    compile(group: 'com.themodernway', name: 'themodernway-server-rest', version: '1.2.29-RELEASE')
-    compile(group: 'com.themodernway', name: 'themodernway-server-mongodb', version: '1.2.29-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-sql', version: '1.2.31-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-rest', version: '1.2.31-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-mongodb', version: '1.2.31-RELEASE')
     compile(group: 'org.postgresql', name: 'postgresql', version: '42.1.4')
     providedCompile(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0')
 }

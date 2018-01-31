@@ -52,7 +52,6 @@
 				<value>file:/opt/development/properties/gateway/webapp.properties</value>
 			</list>
 		</property>
-		<property name="loggingLevelAsString" value="INFO" />
 	</bean>
 
 	<bean id="TheModernWayGatewayBuildDescriptor" class="com.themodernway.server.core.support.spring.BuildDescriptor">
@@ -123,7 +122,7 @@
 	
 	<bean id="ContentSimpleFileItemStorage" class="com.themodernway.server.core.file.vfs.simple.SimpleFileItemStorage">
 		<constructor-arg value="content" />
-		<constructor-arg value="/Development/content" />
+		<constructor-arg value="/opt/content" />
 	</bean>
 	
 	<bean id="HeaderInjectorFilterContextCustomizer" class="com.themodernway.server.core.support.spring.HeaderInjectorFilterContextCustomizer">

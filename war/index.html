@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>API Gateway 1.2.32-RELEASE</title>
+<title>API Gateway 1.3.1-RELEASE</title>
 </head>
 <script src="assets/js/angular.min.js"></script>
 <script src="assets/js/app.js"></script>
@@ -26,7 +26,10 @@
         <button ng-click="doServiceGET('/users/finduser_by_name?name=dean')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Find Dean</button>
         <button ng-click="doServiceGET('/users/increment_user__by_name?name=bob')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Increment Bob</button>
         <button ng-click="doServiceGET('/users/increment_user__by_name?name=dean')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Increment Dean</button>
+        <button ng-click="doServiceGET('/demo/posts')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Posts</button>
         <button ng-click="doServiceGET('/demo/limited')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Limited</button>
+        <button ng-click="doServiceGET('/demo/code_old')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Code Old</button>
+        <button ng-click="doServiceGET('/demo/code_new')" ng-disabled="working" class="w3-btn w3-padding w3-blue">Code New</button>
         <button ng-click="doServiceGET('/demo/notfound')" ng-disabled="working" class="w3-btn w3-padding w3-red">Not Found</button>
         <button ng-click="doServiceGET('/demo/admin_only')" ng-disabled="working" class="w3-btn w3-padding w3-red">Permissions</button>
         <button ng-click="doServiceGET('/demo/always_throw')" ng-disabled="working" class="w3-btn w3-padding w3-red">Error</button>

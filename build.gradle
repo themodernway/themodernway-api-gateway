@@ -15,9 +15,7 @@
  */
 
 buildscript {
-    repositories {
-        mavenCentral()
-    }
+    repositories { mavenCentral() }
     dependencies {
         classpath(group: 'org.ajoberstar', name: 'grgit', version: '1.7.2')
         classpath(group: 'commons-codec', name: 'commons-codec', version: '1.11')
@@ -44,7 +42,7 @@ sourceCompatibility = 1.8
 
 targetCompatibility = 1.8
 
-version = '2.0.0-RC4'
+version = '2.0.0-RC5'
 
 repositories {
     mavenCentral()
@@ -52,9 +50,7 @@ repositories {
 }
 
 eclipse {
-    classpath {
-        downloadJavadoc = true
-    }
+    classpath { downloadJavadoc = true }
 }
 
 tasks.withType(GroovyCompile) {
@@ -62,7 +58,7 @@ tasks.withType(GroovyCompile) {
 }
 
 task deleteConfigs(type: Delete) {
-    FileTree tree = fileTree(dir: 'build/resources/main/com/themodernway/api/gateway/config');
+    FileTree tree = fileTree(dir: 'build/resources/main/com/themodernway/api/gateway/config')
     tree.each { File file ->
         delete(file)
     }
@@ -100,12 +96,10 @@ def String getBuildDate() {
 }
 
 def String getBuildServerHost() {
-    try
-    {
+    try {
         InetAddress.getLocalHost().getHostName()
     }
-    catch (Exception e)
-    {
+    catch (Exception e) {
         'localhost'
     }
 }
@@ -145,9 +139,9 @@ dependencyCheck {
 }
 
 dependencies {
-    compile(group: 'com.themodernway', name: 'themodernway-server-sql', version: '2.0.0-RC4')
-    compile(group: 'com.themodernway', name: 'themodernway-server-rest', version: '2.0.0-RC4')
-    compile(group: 'com.themodernway', name: 'themodernway-server-mongodb', version: '2.0.0-RC4')
+    compile(group: 'com.themodernway', name: 'themodernway-server-sql', version: '2.0.0-RC5')
+    compile(group: 'com.themodernway', name: 'themodernway-server-rest', version: '2.0.0-RC5')
+    compile(group: 'com.themodernway', name: 'themodernway-server-mongodb', version: '2.0.0-RC5')
     compile(group: 'org.postgresql', name: 'postgresql', version: '42.2.1')
     providedCompile(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0')
 }
@@ -158,8 +152,6 @@ war {
     manifest {
         attributes 'Implementation-Title': getProjectTitle(), 'Implementation-Version': getBuildModuleVersion()
     }
-    from('war') {
-        exclude 'WEB-INF/classes/**'
-    }
+    from('war') { exclude 'WEB-INF/classes/**' }
     archiveName 'gateway.war'
 }

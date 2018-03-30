@@ -42,11 +42,10 @@ sourceCompatibility = 1.8
 
 targetCompatibility = 1.8
 
-version = '2.1.0-RELEASE'
+version = '2.1.2-RELEASE'
 
 repositories {
     mavenCentral()
-    maven { url "${sonatype_snapshotURL}" }
 }
 
 eclipse {
@@ -140,9 +139,9 @@ dependencyCheck {
 
 dependencies {
 	compile(group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3')
-    compile(group: 'com.themodernway', name: 'themodernway-server-sql', version: '2.1.0-RELEASE')
-    compile(group: 'com.themodernway', name: 'themodernway-server-rest', version: '2.1.0-RELEASE')
-    compile(group: 'com.themodernway', name: 'themodernway-server-mongodb', version: '2.1.0-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-sql', version: '2.1.2-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-rest', version: '2.1.2-RELEASE')
+    compile(group: 'com.themodernway', name: 'themodernway-server-mongodb', version: '2.1.2-RELEASE')
     compile(group: 'org.postgresql', name: 'postgresql', version: '42.2.2')
     providedCompile(group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0')
 }

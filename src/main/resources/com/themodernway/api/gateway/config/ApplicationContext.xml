@@ -54,7 +54,7 @@
 		</property>
 	</bean>
 
-	<bean id="TheModernWayGatewayBuildDescriptor" class="com.themodernway.server.core.support.spring.BuildDescriptor">
+	<bean id="TheModernWayGatewayBuildDescriptor" class="com.themodernway.server.core.support.spring.BuildDescriptor" lazy-init="true">
 		<constructor-arg value="@GRADLE_BUILD_PROJECT_TITLE@" />
 		<property name="buildUser">
 			<value><![CDATA[@GRADLE_BUILD_USER@]]></value>
@@ -73,11 +73,10 @@
 		<property name="buildModuleVersion" value="@GRADLE_BUILD_ARTIFACT_ID@-@GRADLE_BUILD_MODULE_VERSION@.war" />
 	</bean>
 	
-	<bean id="Gateway_MongoDB" class="com.themodernway.server.mongodb.support.spring.MongoDBDescriptor" destroy-method="close" />
+	<bean id="Gateway_MongoDB" class="com.themodernway.server.mongodb.support.spring.MongoDBDescriptor" destroy-method="close" lazy-init="true" />
 	
-	<bean id="Gateway_HikariConfig" class="com.zaxxer.hikari.HikariConfig">
+	<bean id="Gateway_HikariConfig" class="com.zaxxer.hikari.HikariConfig" lazy-init="true">
 		<property name="poolName" value="Gateway_SpringHikariCP" />
-		<property name="connectionTestQuery" value="SELECT NOW()" />
 		<property name="dataSourceClassName" value="org.postgresql.ds.PGSimpleDataSource" />
 		<property name="maximumPoolSize" value="12" />
 		<property name="idleTimeout" value="30000" />
@@ -91,16 +90,16 @@
 		</property>
 	</bean>
 
-	<bean id="Gateway_SQLPooledDS" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+	<bean id="Gateway_SQLPooledDS" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close" lazy-init="true">
 		<constructor-arg ref="Gateway_HikariConfig" />
 	</bean>
 	
-	<bean id="Gateway_SQLDescriptor" class="com.themodernway.server.sql.support.spring.GSQLDescriptor" destroy-method="close">
+	<bean id="Gateway_SQLDescriptor" class="com.themodernway.server.sql.support.spring.GSQLDescriptor" destroy-method="close" lazy-init="true">
 		<constructor-arg ref="Gateway_SQLPooledDS" />
     	<property name="description" value="API PostgreSQL DataBase" />
     </bean>
 	
-	<bean id="ScriptingProvider" class="com.themodernway.server.core.scripting.ScriptingProvider" destroy-method="close">
+	<bean id="ScriptingProvider" class="com.themodernway.server.core.scripting.ScriptingProvider" destroy-method="close" lazy-init="true">
 		<constructor-arg>
 			<list>
 				<bean class="com.themodernway.server.core.scripting.GroovyScriptingProperties" />
@@ -109,23 +108,23 @@
 		</constructor-arg>
 	</bean>
 	
-	<bean id="RESTServletContextCustomizer" class="com.themodernway.server.rest.support.spring.RESTServletContextCustomizer">
+	<bean id="RESTServletContextCustomizer" class="com.themodernway.server.rest.support.spring.RESTServletContextCustomizer" lazy-init="true">
 		<constructor-arg value="RESTServlet" />
 		<constructor-arg value="/services/*" />
 	</bean>
 	
-	<bean id="ContentGetServletContextCustomizer" class="com.themodernway.server.core.support.spring.ContentGetServletContextCustomizer">
+	<bean id="ContentGetServletContextCustomizer" class="com.themodernway.server.core.support.spring.ContentGetServletContextCustomizer" lazy-init="true">
 		<constructor-arg value="ContentGetServlet" />
 		<constructor-arg value="/content/*" />
 		<property name="fileItemStorageName" value="content" />
 	</bean>
 	
-	<bean id="ContentSimpleFileItemStorage" class="com.themodernway.server.core.file.vfs.simple.SimpleFileItemStorage">
+	<bean id="ContentSimpleFileItemStorage" class="com.themodernway.server.core.file.vfs.simple.SimpleFileItemStorage" lazy-init="true">
 		<constructor-arg value="content" />
 		<constructor-arg value="/opt/content" />
 	</bean>
 	
-	<bean id="HeaderInjectorFilterContextCustomizer" class="com.themodernway.server.core.support.spring.HeaderInjectorFilterContextCustomizer">
+	<bean id="HeaderInjectorFilterContextCustomizer" class="com.themodernway.server.core.support.spring.HeaderInjectorFilterContextCustomizer" lazy-init="true">
 		<constructor-arg value="SecurityFilter" />
 		<constructor-arg value="/*" />
 		<constructor-arg>

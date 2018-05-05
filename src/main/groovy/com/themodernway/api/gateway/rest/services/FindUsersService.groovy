@@ -24,7 +24,7 @@ import com.themodernway.server.rest.IRESTRequestContext
 import com.themodernway.server.rest.RESTServiceSupport
 import com.themodernway.server.rest.RequestBinding
 import com.themodernway.server.rest.RequestMethod
-import com.themodernway.server.sql.support.GSQLTrait
+import com.themodernway.server.sql.support.GSQLGroovyTrait
 
 import groovy.transform.CompileStatic
 
@@ -32,7 +32,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 @RequestMethod(HttpMethod.GET)
 @RequestBinding('/users/findusers')
-public class FindUsersService extends RESTServiceSupport implements GSQLTrait
+public class FindUsersService extends RESTServiceSupport implements GSQLGroovyTrait
 {
     @Override
     def call(final IRESTRequestContext context, final JSONObject object) throws Exception
